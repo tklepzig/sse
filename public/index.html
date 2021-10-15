@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <script>
+      const start = () => {
+        if (!window.EventSource) {
+          console.log("Your browser doesn't support SSE");
+          return;
+        }
+        var source = new EventSource("/events");
+
+        source.addEventListener(
+          "blubb",
+          function (e) {
+            document.getElementById("data").innerHTML =
+              JSON.parse(e.data).length > 0
+                ? JSON.parse(e.data)
+                    .map((t) => `- ${t}`)
+                    .join("<br>")
+                : "- No Tasks -";
+          },
+          false
+        );
+
+        source.addEventListener(
+          "open",
+          function (e) {
+            document.getElementById("state").innerHTML = "Connected";
+          },
+          false
+        );
+
+        source.addEventListener(
+          "error",
+          function (e) {
+            const id_state = document.getElementById("state");
+            //with this line reconnect is literally disabled
+            //if (e.eventPhase == EventSource.CLOSED) source.close();
+            if (e.target.readyState == EventSource.CLOSED) {
+              id_state.innerHTML = "Disconnected";
+            } else if (e.target.readyState == EventSource.CONNECTING) {
+              id_state.innerHTML = "Connecting...";
+            }
+          },
+          false
+        );
+      };
+      start();
+    </script>
+  </head>
+  <body>
+    <h1>SSE: <span id="state"></span></h1>
+    <h3>Tasks</h3>
+    <span id="data"></span>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<html>
+  <body>
+    <h1 id="state"></h1>
+    <div id="content"></div>
+
+    <script type="text/javascript">
+      const source = new EventSource("/events");
+
+      source.addEventListener("message", (message) => {
+        console.log("Got", message);
+
+        // Display the event data in the `content` div
+        document.querySelector("#content").innerHTML = event.data;
+      });
+
+      source.addEventListener("open", () => {
+        document.getElementById("state").innerHTML = "Connected";
+      });
+
+      source.addEventListener("error", (e) => {
+        const id_state = document.getElementById("state");
+        console.dir(e);
+        //if (e.eventPhase == EventSource.CLOSED) source.close();
+        if (e.target.readyState == EventSource.CLOSED) {
+          id_state.innerHTML = "Disconnected";
+        } else if (e.target.readyState == EventSource.CONNECTING) {
+          id_state.innerHTML = "Connecting...";
+        }
+      });
+    </script>
+  </body>
+</html>
