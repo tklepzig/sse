@@ -10,7 +10,7 @@ app.use(urlencoded({ extended: false }));
 
 app.get("/status", (_, response) => response.json({ clients: clients.length }));
 
-const PORT = 3000;
+const PORT = 3001;
 
 let clients = [];
 let tasks = [];
